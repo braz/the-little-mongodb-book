@@ -535,12 +535,12 @@ The `explain()` method can be used with any command that could use an index, lik
 MongoDB replication works in some ways similarly to how relational database replication works. All production deployments should be replica sets, which consist of ideally three or more servers that hold the same data.  Writes are sent to a single server, the primary, from where it's asynchronously replicated to every secondary. You can control whether you allow reads to happen on secondaries or not, which can help direct some special queries away from the primary, at the risk of reading slightly stale data. If the primary goes down, one of the secondaries will be automatically elected to be the new primary. Replication keeps multiple live copies of your data which helps increase data availability and reliability in the case of failure. This reliability does not add any additional capacity in your deployment, to do this we need to use sharding. Again, MongoDB replication is outside the scope of this book.
 
 ## Sharding ##
-MongoDB supports auto-sharding. Sharding is an approach to scalability which partitions your data across multiple servers or clusters. A naive implementation might put all of the data for users with a name that starts with A-M on server 1 and the rest on server 2. Thankfully, MongoDB's sharding capabilities far exceed such a simple algorithm. Sharding is a topic well beyond the scope of this book, but you should know that it exists and that you should consider it, should your needs grow beyond a single replica set.
+MongoDB supports auto-sharding. Sharding is an approach to scalability which partitions your data across multiple servers or clusters. A naive implementation might put all of the data for users with a name that starts with A-M on server 1 and the rest on server 2. Thankfully, MongoDB's sharding capabilities far exceed such a simple algorithm. Sharding has had some recent improvements that are worth highlighting as prior to these sharding choices were unchangable and difficult to resolve if a poor initial choices had been made. In MongoDB 5.0, you can change a shard key for a collection and since MongoDB 4.4 document fields used by the shard key can be missing. Sharding is a topic well beyond the scope of this book, but you should know that it exists and that you should consider it, should your needs grow beyond a single replica set.
 
 While replication can help performance somewhat (by isolating long running queries to secondaries, and reducing latency for some other types of queries), its main purpose is to provide high availability. Sharding is the primary method for scaling MongoDB clusters. Combining replication with sharding is the prescribed approach to achieve scaling and high availability.
 
 ## Stats ##
-You can obtain statistics on a database by typing `db.stats()`. Most of the information deals with the size of your database. You can also get statistics on a collection, say `unicorns`, by typing `db.unicorns.stats()`. Most of this information relates to the size of your collection and its indexes.  If you are using Atlas, there are multiple metrics screens showing you the same stats data in graphical format over time.
+You can obtain statistics on a database by typing `db.stats()`. Most of the information deals with the size of your database. You can also get statistics on a collection, say `unicorns`, by typing `db.unicorns.stats()`. Most of this information relates to the size of your collection and its indexes.  If you are using Atlas, there are multiple metrics screens showing you the same statistical data in graphical format over time.
 
 ## Profiler ##
 You can enable the MongoDB profiler by executing:
@@ -562,7 +562,16 @@ You disable the profiler by calling `setProfilingLevel` again but changing the p
 	//profile anything that takes more than 1 second
 	db.setProfilingLevel(1, 1000);
 
-AK-TODO mention sampling and that profiling isn't usually for production.  You can also specify a third parameter to indicate a sampling threshold - by default all queries over slow ms will be profiled, also AK-TODO mention profile `filter`
+Profiling is turned off by default in MongoDB as it is a diagnostic feature and has an overhead which could impact production. It profiles all the slow operations over a defined time. Profiling can be configured to sample a fraction of the slow operations, the slow operations are defined by how long they take with `slowMS` and the fraction to sample (from 0 to 1) by `sampleRate`, both of these are global settings to a database.
+
+	//profile anything that takes more than 20 milliseconds and sammple 0.42 or 42% of the slower than 20ms operations
+	db.setProfilingLevel(1, {slowms: 20, sampleRate: 0.42})
+
+In MongoDB 4.2 profiling adding the ability to `filter` for specific defined operations using a filter expression that controls which operations are profiled and logged. If a `filter` is specified for profiling then the `slowms` and the `sampleRate` parameters are not used for profiling.
+
+	//profile only the query operations that took longer than 2 seconds
+	db.setProfilingLevel(1, {filter: {op: "query", millis: {$gt: 2000}}})
+
 
 ## Backups and Restore ##
 AK-TODO TOOLS ARE NOT SEPARATE PACKAGING Within the MongoDB `bin` folder is a `mongodump` executable. Simply executing `mongodump` will connect to localhost and backup all of your databases to a `dump` subfolder. You can type `mongodump --help` to see additional options. Common options are `--db DBNAME` to back up a specific database and `--collection COLLECTIONNAME` to back up a specific collection. You can then use the `mongorestore` executable, located in the same `bin` folder, to restore a previously made backup. Again, the `--db` and `--collection` can be specified to restore a specific database and/or collection.  `mongodump` and `mongorestore` operate on BSON, which is MongoDB's native format.
