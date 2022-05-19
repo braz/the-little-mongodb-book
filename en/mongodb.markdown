@@ -45,16 +45,15 @@ This does bring up the first thing you should know about MongoDB: its drivers. M
 
 As you read through this, I encourage you to play with MongoDB to replicate what I demonstrate as well as to explore questions that you might come up with on your own. It's easy to get up and running with MongoDB, so let's take a few minutes now to set things up.  You'll need to have a MongoDB server running somewhere, as well as a MongoDB client (CLI or GUI) running locally.
 
-For the client part, install either MongoDB Shell from [the official page](https://www.mongodb.com/docs/mongodb-shell/) or if you prefer GUI to command line shell, you can use [MongoDB Compass](https://www.mongodb.com/try/download/compass), an open source GUI for MongoDB. MongoDB Compass has the shell built-in so you can switch between using GUI and command line as you wish.
+For the client part, install either the MongoDB Shell from [the official page](https://www.mongodb.com/try/download/shell) or if you prefer GUI to command line shell, you can use the [MongoDB Compass](https://www.mongodb.com/try/download/compass), an open source GUI for MongoDB. MongoDB Compass has the shell built-in so you can switch between using GUI and command line as you wish.
 
-To run the server, if you don't want to (or can't) install MongoDB server locally, you can sign up for a free hosted MongoDB cluster in [Atlas](https://www.mongodb.com/cloud/atlas) - follow the [getting started directions](https://docs.atlas.mongodb.com/getting-started/) there to connect to your cluster.
+To run the server, if you don't want to (or can't) install the MongoDB server locally, you can sign up for a free hosted MongoDB cluster in [MongoDB Atlas](https://www.mongodb.com/atlas) - follow the [getting started directions](https://docs.atlas.mongodb.com/getting-started/) there to connect to your cluster. If you prefer the command line to the web GUI than you can use the [MongoDB Atlas CLI](https://www.mongodb.com/try/download/atlascli) to install, deploy, and manage a MongoDB cluster in [MongoDB Atlas](https://www.mongodb.com/atlas).
 
 If you can run MongoDB locally and prefer to do that, follow instructions for your operating system on the [official installation manual page](https://www.mongodb.com/docs/manual/administration/install-community/).
 
 Once you have `mongod` running locally or a connection string to your Atlas MongoDB cluster, connect to it from your MongoDB Shell or Compass.
 
-Try entering `db.version()` at the prompt to make sure everything's working as it should. Hopefully you'll see the server version number you connected to.
-
+Try entering `db.version()` at the prompt to make sure everything's working as it should. Hopefully you'll see the server version number you connected to. If you have difficulties connecting then beyond the MongoDB documentation pages, please use [MongoDB's Community Forums](https://www.mongodb.com/community/forums/) to help set you up for journey into MongoDB.
 
 
 # Chapter 1 - The Basics #
@@ -82,7 +81,7 @@ Although this is important to understand, don't worry if things aren't yet clear
 
 Let's get hands-on. If you don't have it running already, go ahead and start the `mongod` server as well as a mongo shell or Compass. The shell runs JavaScript. There are some global commands you can execute, like `help` or `exit`. Commands that you execute against the current database are executed against the `db` object, such as `db.help()` or `db.stats()`. Commands that you execute against a specific collection, which is what we'll be doing a lot of, are executed against the `db.COLLECTION_NAME` object, such as `db.unicorns.help()` or `db.unicorns.count()`.
 
-Go ahead and enter `db.help()`, you'll get a list of commands that you can execute against the `db` object.
+Go ahead and enter `db.help()`, you'll get a list of commands that you can execute against the `db` object. The full list of commands the shell supports is [listed here](https://www.mongodb.com/docs/mongodb-shell/reference/methods/#std-label-mdb-shell-methods).
 
 A small side note: Because this is a JavaScript shell, if you execute a method and omit the parentheses `()`, you'll see the method body rather than executing the method. I only mention it so that the first time you do it and get a response that starts with `[Function: ...` you won't be surprised. For example, if you enter `db.stats` (without the parentheses), you'll see the details of  implementation of the `stats` method.
 
@@ -90,7 +89,7 @@ First we'll use the global `use` helper to switch databases, so go ahead and ent
 
 	db.unicorns.insertOne({name: 'Aurora', gender: 'f', weight: 450})
 
-The above line is executing `insert` against the `unicorns` collection, passing it a single document. Internally MongoDB uses a binary serialized JSON format called BSON. Externally, this means that we use JSON a lot, as is the case with our parameters. If we execute `db.getCollectionNames()` now, we'll see a `unicorns` collection.
+The above line is executing `insert` against the `unicorns` collection, passing it a single document. Internally MongoDB uses a binary serialized JSON format called BSON (you can find more details [in the BSON specification](https://bsonspec.org/)). Externally, this means that we use JSON a lot, as is the case with our parameters. If we execute `db.getCollectionNames()` now, we'll see a `unicorns` collection.
 
 You can now use the `find` command against `unicorns` to return a list of documents:
 
@@ -456,13 +455,16 @@ Durability is only mentioned here because a lot has been made around MongoDB's p
 (AK-TODO mention Atlas search with Lucene?  Two options, depending on Atlas or not) True full text search capability is a recent addition to MongoDB.  It supports fifteen languages with stemming and stop words. With MongoDB's support for arrays and full text search you will only need to look to other solutions if you need a more powerful and full-featured full text search engine.    
 
 ## Transactions ##
-MongoDB added full support for ACID transactions in 4.0 (extending it to sharded clusters in 4.2). Before that there were two alternatives, one which is great and still has its place, and the other that was cumbersome but flexible.
+MongoDB added full support for ACID (Atomicity, Consistency, Isolation, and Durability) transactions in 4.0 (extending it to sharded clusters in 4.2). Before that there were two alternatives, one which is great and still has its place, and the other that was cumbersome but flexible.
 
 The first is its many atomic update operations. These are great, so long as they actually address your problem. We already saw some of the simpler ones, like `$inc` and `$set`. There are also commands like `findAndModify` which can update or delete a document and return it atomically.  When atomicity can be ensured this way, it's preferable to using transactions for speed and overall scalability of the system.
 
-The second, when atomic operations aren't enough, was to fall back to a two-phase commit. A two-phase commit is to transactions what manual dereferencing is to joins. It's a storage-agnostic solution that you do in code. Two-phase commits are actually quite popular in the relational world as a way to implement transactions across multiple databases. AK-TODO check AK-TODO The MongoDB website [had an example](http://docs.mongodb.org/manual/tutorial/perform-two-phase-commits/) AK NO LONGER THERE - remove section? illustrating the most typical example (a transfer of funds). The general idea is that you store the state of the transaction within the actual document being updated atomically and go through the init-pending-commit/rollback steps manually.  This is the case where using MongoDB native multi-document transactions is a great option as they significantly simplify the application code.
+The second, when atomic operations aren't enough, was to fall back to a two-phase commit. A two-phase commit is to transactions what manual dereferencing is to joins. It's a storage-agnostic solution that you do in code. Two-phase commits are actually quite popular in the relational world as a way to implement transactions across multiple databases. There is an example of how MongoDB [previously performed two-phase commits](https://www.mongodb.com/docs/v3.6/tutorial/perform-two-phase-commits/) illustrating the most typical example (a transfer of funds). The general idea is that you store the state of the transaction within the actual document being updated atomically and go through the init-pending-commit/rollback steps manually.  This is the case where using MongoDB native multi-document transactions is a great option as they significantly simplify the application code. The introduction of transactions to MongoDB provided a far superior solution to two-phase commits.
 
-TODO short paragraph on transaction details?
+A transaction is a logical group or groups of processing performed in a database, each of these group's or transactions can have one or more operations such as reads or writes across multiple documents. MongoDB supports ACID-compliant transactions spanning multiple operations, collections, databases, documents, and shards.
+Transactions provide an important feature, it will either completely succeed or it will fail, transaction never partial complete. The MongoDB engineering department have a number of [deep-dive technical chalk and talk videos](https://www.mongodb.com/transactions) where the details of the implementation and ACID-compliance are covered in greater depth. The [MongoDB Transactions documentation page](https://www.mongodb.com/docs/manual/core/transactions/) provides language specific guidance for how to use transactions with MongoDB and the desired programming language.
+
+Transactions are recommended only for situations that require atomicity of reads and writes to multiple documents. In all other cases, atomic update operations on single documents are recommended as these ensure better scalability and speed for your application.
 
 ## Data Processing ##
 Before version 2.2 MongoDB relied on MapReduce for most data processing jobs. In 2012 as of 2.2 it has added a powerful feature called  [aggregation framework or pipeline](http://docs.mongodb.org/manual/core/aggregation-pipeline/), AK-TODO (remove mapReduce references) and as of 5.0 MapReduce has been deprecated (and internally it actually runs as an aggregation pipeline) so you'll never need to use MapReduce. In the next chapter we'll look at Aggregation Pipeline in detail. For now you can think of it as feature-rich and different ways to `group by` (which is an understatement).  For parallel processing of massive datasets, you may need to rely on something else, such as Hadoop. Thankfully, since the two systems really do complement each other, there's a [MongoDB connector for Hadoop](http://docs.mongodb.org/ecosystem/tools/hadoop/). (should this be instead about other specialized systems, incl Hadoop (like Kafka, etc)?
@@ -504,7 +506,17 @@ Indexes can be created on embedded fields (again, using the dot-notation) and on
 
 The direction of your index (1 for ascending, -1 for descending) doesn't matter for a single key index, but it can make a difference for compound indexes when you are sorting on more than one indexed field.
 
-The [indexes page](http://docs.mongodb.org/manual/indexes/) has additional information on indexes.  You can create indexes in the shell, or use the UI provided by Compass or Atlas.
+Indexes can be hidden in MongoDB since 4.4. A hidden index is not visible to the query planner and cannot be used to support a query. This allows for an index to be hidden before it is dropped to see what impact the removal of the index would have. If the impact is negative and the index is actually required, then it can be easily unhidden without the need to recreate the index.
+
+Indexes are hidden via `hideIndex`:
+
+	db.unicorns.hideIndex({name: 1});
+
+And unhidden via `unhideIndex`:
+
+	db.unicorns.unhideIndex({name: 1});
+
+The [indexes page](http://docs.mongodb.org/manual/indexes/) has additional information on indexes.  You can create indexes in the shell, or use the UI provided by Compass or Atlas, or via the Atlas CLI for MongoDB Atlas deployments.
 
 ## Explain ##
 To see whether or not your queries are using an index, you can use the `explain` method on a cursor:
@@ -520,7 +532,7 @@ If we change our query to use an index, we'll see that a AK-TODO change all this
 The `explain()` method can be used with any command that could use an index, like `aggregate`, `update`, etc.
 
 ## Replication ##
-MongoDB replication works in some ways similarly to how relational database replication works. All production deployments should be replica sets, which consist of ideally three or more servers that hold the same data.  Writes are sent to a single server, the primary, from where it's asynchronously replicated to every secondary. You can control whether you allow reads to happen on secondaries or not, which can help direct some special queries away from the primary, at the risk of reading slightly stale data. If the primary goes down, one of the secondaries will be automatically elected to be the new primary. Again, MongoDB replication is outside the scope of this book.
+MongoDB replication works in some ways similarly to how relational database replication works. All production deployments should be replica sets, which consist of ideally three or more servers that hold the same data.  Writes are sent to a single server, the primary, from where it's asynchronously replicated to every secondary. You can control whether you allow reads to happen on secondaries or not, which can help direct some special queries away from the primary, at the risk of reading slightly stale data. If the primary goes down, one of the secondaries will be automatically elected to be the new primary. Replication keeps multiple live copies of your data which helps increase data availability and reliability in the case of failure. This reliability does not add any additional capacity in your deployment, to do this we need to use sharding. Again, MongoDB replication is outside the scope of this book.
 
 ## Sharding ##
 MongoDB supports auto-sharding. Sharding is an approach to scalability which partitions your data across multiple servers or clusters. A naive implementation might put all of the data for users with a name that starts with A-M on server 1 and the rest on server 2. Thankfully, MongoDB's sharding capabilities far exceed such a simple algorithm. Sharding is a topic well beyond the scope of this book, but you should know that it exists and that you should consider it, should your needs grow beyond a single replica set.
@@ -580,6 +592,6 @@ In this chapter we looked at various commands, tools and performance details of 
 A short chapter on security stuff
 
 # Conclusion #
-You should have enough information to start using MongoDB in a real project. There's more to MongoDB than what we've covered, but your next priority should be putting together what we've learned, and getting familiar with the driver you'll be using. The [MongoDB website](http://www.mongodb.org/) has a lot of useful information. The official AK-TODO replace with reference to community site [MongoDB Community Forums](https://www.mongodb.com/community/forums/) are a great place to ask questions.
+You should have enough information to start using MongoDB in a real project. There's more to MongoDB than what we've covered, but your next priority should be putting together what we've learned, and getting familiar with the driver you'll be using. The [MongoDB website](http://www.mongodb.org/) has a lot of useful information. The [MongoDB Community Forums](https://www.mongodb.com/community/forums/) are a forum where you get more information and your questions answered by others in the community. The [Developer section on MongoDB's website](https://www.mongodb.com/developer/) has a wide range of articles and podcast episodes that are aimed at developers.
 
 NoSQL was born not only out of necessity, but also out of an interest in trying new approaches. It is an acknowledgment that our field is ever-advancing and that if we don't try, and sometimes fail, we can never succeed. This, I think, is a good way to lead our professional lives.
