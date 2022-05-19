@@ -479,6 +479,7 @@ When it was first released, MongoDB did not have secure defaults and relied on t
 
 If you're not using MongoDB Atlas, you will need to follow these steps:
 
+<<<<<<< HEAD
 - enable access control and specify an authentication mechanism
 - configure role based access-control
 - encrypt communication (TLS/SSL)
@@ -489,6 +490,12 @@ If you're not using MongoDB Atlas, you will need to follow these steps:
 
 ## Backup and Restore ##
 When you have production data, you want to make sure that you back it up on regular basis (as well as testing restoring it). There are several approaches to doing backups with MongoDB, all described [here](https://www.mongodb.com/docs/manual/core/backups/).  Simplest for small amount of data is using `mongodump` and `mongorestore` executables that are part of [MongoDB Tools package](https://www.mongodb.com/docs/database-tools/installation/installation/). Simply executing `mongodump` will connect to localhost or any connection string you pass to it, and backup all of your databases to a `dump` subfolder. You can type `mongodump --help` to see additional options. Common options are to back up only a specific database or collection. You can then use the `mongorestore` executable to restore a previously made backup. `mongodump` and `mongorestore` operate on BSON, which is MongoDB's native format.
+=======
+## Backups and Restore ##
+In MongoDB 4.4, the MongoDB Database Tools were separated into their own package. They also started a new versioning beginning with 100.0.0. In earlier versions of MongoDB these tools were released as part of the MongoDB Server package and used the same versioning. You should download the tools from [this link](https://www.mongodb.com/try/download/database-tools) and then install them to follow along with the rest of this section.
+
+The [installation docs page for the MongoDB Database Tools](https://www.mongodb.com/docs/database-tools/installation/installation/) for your specific operating system will highlight where and how you can call these tools from your OS. The `mongodump` tool will connect to localhost and backup all of your databases to a `dump` subfolder. You can type `mongodump --help` to see additional options. Common options are `--db DBNAME` to back up a specific database and `--collection COLLECTIONNAME` to back up a specific collection. These dump files can be restored by the `mongorestore` executable. Again, the `--db` and `--collection` can be specified to restore a specific database and/or collection.  `mongodump` and `mongorestore` operate on BSON, which is MongoDB's native format.
+>>>>>>> 255b24e (Updates to the Backup and Restore section to address the TODOs.)
 
 For example, to back up our `learn` database to a `backup` folder, we'd execute (this is its own executable which you run in a command/terminal window, not within the mongo shell itself):
 
