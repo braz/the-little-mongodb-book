@@ -48,7 +48,6 @@ Once you have `mongod` running locally or a connection string to your Atlas Mong
 
 Try entering `db.version()` at the prompt to make sure everything's working as it should. Hopefully you'll see the server version number you connected to. 
 
-
 # Chapter 1 - The Basics #
 We begin our journey by learning the basics of working with MongoDB. Obviously this is core to understanding MongoDB, but it should also help us answer higher-level questions about where MongoDB fits.
 
@@ -74,7 +73,7 @@ Although this is important to understand, don't worry if things aren't yet clear
 
 Let's get hands-on. If you don't have it running already, go ahead and start the `mongod` server as well as a mongo shell or Compass. The shell runs JavaScript. There are some global commands you can execute, like `help` or `exit`. Commands that you execute against the current database are executed against the `db` object, such as `db.help()` or `db.stats()`. Commands that you execute against a specific collection, which is what we'll be doing a lot of, are executed against the `db.COLLECTION_NAME` object, such as `db.unicorns.help()` or `db.unicorns.count()`.
 
-Go ahead and enter `db.help()`, you'll get a list of commands that you can execute against the `db` object.
+Go ahead and enter `db.help()`, you'll get a list of commands that you can execute against the `db` object. The full list of commands the shell supports is [listed here](https://www.mongodb.com/docs/mongodb-shell/reference/methods/#std-label-mdb-shell-methods).
 
 A small side note: Because this is a JavaScript shell, if you execute a method and omit the parentheses `()`, you'll see the method body rather than executing the method. I only mention it so that the first time you do it and get a response that starts with `[Function: ...` you won't be surprised. For example, if you enter `db.stats` (without the parentheses), you'll see the details of  implementation of the `stats` method.
 
@@ -82,7 +81,7 @@ First we'll use the global `use` helper to switch databases, so go ahead and ent
 
 	db.unicorns.insertOne({name: 'Aurora', gender: 'f', weight: 450})
 
-The above line is executing `insert` against the `unicorns` collection, passing it a single document. Internally MongoDB uses a binary serialized JSON format called BSON. Externally, this means that we use JSON a lot, as is the case with our parameters. If we execute `db.getCollectionNames()` now, we'll see a `unicorns` collection.
+The above line is executing `insert` against the `unicorns` collection, passing it a single document. Internally MongoDB uses a binary serialized JSON format called BSON (you can find more details [in the BSON specification](https://bsonspec.org/)). Externally, this means that we use JSON a lot, as is the case with our parameters. If we execute `db.getCollectionNames()` now, we'll see a `unicorns` collection.
 
 You can now use the `find` command against `unicorns` to return a list of documents:
 
@@ -420,7 +419,17 @@ Indexes can be created on embedded fields (again, using the dot-notation) and on
 
 The direction of your index (1 for ascending, -1 for descending) doesn't matter for a single key index, but it can make a difference for compound indexes when you are sorting on more than one indexed field.
 
-The [indexes page](http://docs.mongodb.org/manual/indexes/) has additional information on indexes.  You can create indexes in the shell, or use the UI provided by Compass or Atlas.
+Indexes can be hidden in MongoDB since 4.4. A hidden index is not visible to the query planner and cannot be used to support a query. This allows for an index to be hidden before it is dropped to see what impact the removal of the index would have. If the impact is negative and the index is actually required, then it can be easily unhidden without the need to recreate the index.
+
+Indexes are hidden via `hideIndex`:
+
+	db.unicorns.hideIndex({name: 1});
+
+And unhidden via `unhideIndex`:
+
+	db.unicorns.unhideIndex({name: 1});
+
+The [indexes page](http://docs.mongodb.org/manual/indexes/) has additional information on indexes.  You can create indexes in the shell, or use the UI provided by Compass or Atlas, or via the Atlas CLI for MongoDB Atlas deployments.
 
 ## Explain ##
 To see whether or not your queries are using an index, you can use the `explain` method:
