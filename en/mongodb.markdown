@@ -445,7 +445,7 @@ If we change our query to use an index, we'll see that the winning plan used `IX
 The `explain()` method can be used with any command that could use an index, like `aggregate`, `update`, etc.
 
 ## Stats ##
-You can obtain statistics on a database by typing `db.stats()`. Most of the information deals with the size of your database. You can also get statistics on a collection, say `unicorns`, by typing `db.unicorns.stats()`. Most of this information relates to the size of your collection and its indexes.  If you are using Atlas, there are multiple metrics screens showing you the same stats data in graphical format over time.
+You can obtain statistics on a database by typing `db.stats()`. Most of the information deals with the size of your database. You can also get statistics on a collection, say `unicorns`, by typing `db.unicorns.stats()`. Most of this information relates to the size of your collection and its indexes.  If you are using Atlas, there are multiple metrics screens showing you the same statistical data in graphical format over time.
 
 ## Profiler ##
 You can enable the MongoDB profiler by executing:
@@ -471,7 +471,6 @@ You can specify that only a sampling of all operations should be profiled, but e
 
 ## In This Chapter ##
 In this chapter we looked at various commands, tools and performance details of using MongoDB. We haven't touched on everything, but we've looked at some of the common ones. Indexing in MongoDB is similar to indexing with relational databases, as are many of the tools. However, with MongoDB, many of these are to the point and simple to use.
-
 
 # Chapter 8 - Security and Backups #
 
