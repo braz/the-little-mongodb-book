@@ -14,8 +14,8 @@ His blog can be found at <http://openmymind.net>, and he tweets via `@karlseguin
 ## About MongoDB Inc ##
 MongoDB Inc is the company behind MongoDB database and the developer data platform. From its first pull request by Dwight Merriman on October 19, 2007, MongoDB has grown into an international organization with a wide range of products and services.  MongoDB Inc maintains and enhances MongoDB database, MongoDB drivers, provides MongoDB Atlas Database as a Service, and other products.
 
-## Latest Version ##
-This version was updated for MongoDB 6.0 by Asya Kamsky.  The latest source of this book is available at:
+## Latest Version and Contributors ##
+This version was updated for MongoDB 6.0 by MongoDB Inc led by Asya Kamsky and with contributions from Erin Essex, Rachelle Palmer, Tony Sansone, Liz Hill, and Eoin Brazil.  The latest source of this book is available at:
 <http://github.com/mongodb-developer/the-little-mongodb-book>.
 
 
@@ -581,7 +581,28 @@ On the positive side, drivers exist for a great many languages, the protocol is 
 ## In This Chapter ##
 The message from this chapter is that MongoDB, in most cases, can replace a relational database. It's much simpler and straightforward; it's faster and generally imposes fewer restrictions on application developers. The addition of transactions addressed a legitimate and serious concern. So, when people ask *where does MongoDB sit with respect to the new data storage landscape?* the answer is simple: **right in the middle**.
 
+# Chapter 10 - Evolution of MongoDB as a technology #
 
+MongoDB as a database has always focused on features that help developers build. In this chapter, we'll do a quick tour of the highlights to help ensure you can take full advantage of the database and what it offers.
+
+## MongoDB 3.x highlights ##
+
+Document level concurrency was introduced and meant that writes to a single document occur either in full or not at all, and clients always see consistent data. WiredTiger became the default storage engine which greatly improved the performance and scalability of the database. Network compression for on the wire communications was added which greatly reduced the size of information being sent across the wire. We have mentioned change streams and schema validation already in Chapter 9 which were added in the 3.x series.
+
+## MongoDB 4.x highlights ##
+
+Non-blocking secondary reads provides predictable, low read latencies and increased throughput for reads based on storage engine timestamps and snapshots developed for transactions, which was also added in this series as were hidden indexes. The 4.x series also saw wildcard indexes added to support queries against unknown or arbitrary fields, which greatly help when the field names cannot be known in advance or are arbitrary. Retryable reads were enabled by default allowing MongoDB drivers to automatically retry certain read operations a single time if certain network or server errors occur. Refinable shard keys were introduced allowing for existing shard keys to be refined where an additional suffix field or fields to the existing key to create the new shard key. 
+
+## MongoDB 5.x highlights ##
+
+Time-series collections specifically designed for this type of data were introduced. Live resharding where you can change a collection's shard key was added. Resumable index builds allows these builds to continue from the saved checkpoint. MongoCrypt was added which encrypts specific data fields within a document with your MongoDB client application before sending the data to the server. This is all done on the client-side so the server only sees these fields as encrypted. A new Mongo Shell was introduced providing syntax highlight, better command history, and improved logging. Writes and their write concern was set to majority by default, which means the majority of data-bearing nodes acknowledgment before the write operation is flagged to the application as completed.
+
+## MongoDB 6.x highlights ##
+
+Cluster-to-cluster replication provides continuous data replication between two MongoDB clusters in the same or different environments. This makes it far easy to spin up a development or test environment based off another environment. This series focused on a range of query framework improvements including a new query engine, a cost-based query optimizer, faster caching and more concurrent queries. These query framework improvements provide fast queries and the ability to handle more queries than in previous versions for on same hardware.
+
+## In This Chapter ##
+In this chapter we briefly list a selection of technical developments from the 3.x series to the 6.x series of MongoDB. This selection is oriented to developers and our hope is that when you are developing your next MongoDB application that will be aware of these features.
 
 # Conclusion #
 You should have enough information to start using MongoDB in a real project. There's more to MongoDB than what we've covered, but your next priority should be putting together what we've learned, and getting familiar with the driver you'll be using. The [MongoDB website](http://www.mongodb.org/) has a lot of useful information. The official community site [MongoDB Community Forums](https://www.mongodb.com/community/forums/) is a great place to ask questions. The [MongoDB University](http://university.mongodb.com) offers free courses around a range of MongoDB topics as well as paid certification options. The [Developer section on MongoDB's website](https://www.mongodb.com/developer/) has a wide range of articles and podcast episodes that are aimed at developers.
