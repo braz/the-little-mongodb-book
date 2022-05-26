@@ -12,7 +12,7 @@ Karl Seguin is a developer with experience across various fields and technologie
 His blog can be found at <http://openmymind.net>, and he tweets via `@karlseguin`
 
 ## About MongoDB Inc ##
-MongoDB Inc is the company behind MongoDB database platform. From its first pull request by Dwight Merriman on October 19, 2007, MongoDB has grown into an international organization with a wide range of products and services.  MongoDB Inc maintains and enhances MongoDB database platform, MongoDB drivers, provides MongoDB Atlas Database as a Service, and other products.
+MongoDB Inc is the company behind MongoDB database and the developer data platform. From its first pull request by Dwight Merriman on October 19, 2007, MongoDB has grown into an international organization with a wide range of products and services.  MongoDB Inc maintains and enhances MongoDB database, MongoDB drivers, provides MongoDB Atlas Database as a Service, and other products.
 
 ## Latest Version ##
 This version was updated for MongoDB 6.0 by Asya Kamsky.  The latest source of this book is available at:
